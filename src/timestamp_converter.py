@@ -6,6 +6,13 @@ Unix timestamp detection and conversion utilities.
 
 import pandas as pd
 
+from .constants import (
+    UNIX_TIMESTAMP_MIN,
+    UNIX_TIMESTAMP_MAX,
+    TIMESTAMP_KEYWORDS,
+    TIMESTAMP_READABLE_SUFFIX
+)
+
 
 def is_unix_timestamp_column(series: pd.Series) -> bool:
     """
@@ -14,19 +21,19 @@ def is_unix_timestamp_column(series: pd.Series) -> bool:
     """
     # Check if column name suggests timestamp
     name_lower = str(series.name).lower()
-    if not any(keyword in name_lower for keyword in ['time', 'timestamp', 'date']):
+    if not any(keyword in name_lower for keyword in TIMESTAMP_KEYWORDS):
         return False
     
     # Check if values are numeric and in reasonable Unix timestamp range
     if not pd.api.types.is_numeric_dtype(series):
         return False
     
-    # Unix timestamp range: 1/1/2000 (946684800) to 1/1/2100 (4102444800)
+    # Unix timestamp range: 1/1/2000 to 1/1/2100
     non_null = series.dropna()
     if len(non_null) == 0:
         return False
     
-    return non_null.between(946684800, 4102444800).all()
+    return non_null.between(UNIX_TIMESTAMP_MIN, UNIX_TIMESTAMP_MAX).all()
 
 
 def convert_timestamps_to_readable(df: pd.DataFrame) -> pd.DataFrame:
@@ -40,7 +47,7 @@ def convert_timestamps_to_readable(df: pd.DataFrame) -> pd.DataFrame:
     for col in df.columns:
         if is_unix_timestamp_column(df[col]):
             # Create readable column name
-            readable_col = f"{col}_readable"
+            readable_col = f"{col}{TIMESTAMP_READABLE_SUFFIX}"
             
             # Convert Unix timestamp to datetime
             new_columns[readable_col] = pd.to_datetime(df[col], unit='s', errors='coerce')

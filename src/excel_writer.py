@@ -4,11 +4,11 @@
 Excel file writer for SQLite database tables.
 """
 
-import os
 import logging
 from pathlib import Path
 import pandas as pd
 
+from .constants import DB_FILE_EXTENSION, EXCEL_FILE_EXTENSION, EXCEL_MAX_SHEET_NAME_LENGTH
 from .database import get_all_tables, rename_data_format_columns, read_table
 from .timestamp_converter import convert_timestamps_to_readable
 from .formatters import add_row_numbers, format_worksheet
@@ -28,16 +28,17 @@ def convert_db_to_excel(
         raise ValueError("Database path cannot be empty")
     
     db_path = db_path.strip()
+    db_file = Path(db_path)
     
-    if not os.path.exists(db_path):
+    if not db_file.exists():
         raise FileNotFoundError(f"Database file not found: {db_path}")
     
-    if not os.path.isfile(db_path):
+    if not db_file.is_file():
         raise ValueError(f"Path is not a file: {db_path}")
     
     # Validate it's a SQLite database
-    if not db_path.lower().endswith('.db'):
-        logger.warning(f"File does not have .db extension: {db_path}")
+    if db_file.suffix.lower() != DB_FILE_EXTENSION:
+        logger.warning(f"File does not have {DB_FILE_EXTENSION} extension: {db_path}")
     
     # Validate output_path
     if not output_path or not output_path.strip():
@@ -45,14 +46,19 @@ def convert_db_to_excel(
     
     output_path = output_path.strip()
     
-    if not output_path.lower().endswith('.xlsx'):
+    output_file = Path(output_path)
+    
+    if output_file.suffix.lower() != EXCEL_FILE_EXTENSION:
+        raise ValueError(f"Output file must have {EXCEL_FILE_EXTENSION} extension: {output_path}")
+    
+    if output_file.suffix.lower() != '.xlsx':
         raise ValueError(f"Output file must have .xlsx extension: {output_path}")
     
     # Create output directory if it doesn't exist
-    output_dir = os.path.dirname(output_path)
-    if output_dir:
+    output_dir = output_file.parent
+    if output_dir != Path('.'):
         try:
-            Path(output_dir).mkdir(parents=True, exist_ok=True)
+            output_dir.mkdir(parents=True, exist_ok=True)
         except PermissionError:
             raise PermissionError(f"No permission to create output directory: {output_dir}")
         except OSError as e:
@@ -84,8 +90,8 @@ def convert_db_to_excel(
             df = add_row_numbers(df)
             
             # Save to sheet (sheet name is table name)
-            # Excel has a 31 character limit for sheet names
-            sheet_name = table[:31] if len(table) > 31 else table
+            # Excel has a maximum sheet name length
+            sheet_name = table[:EXCEL_MAX_SHEET_NAME_LENGTH] if len(table) > EXCEL_MAX_SHEET_NAME_LENGTH else table
             df.to_excel(writer, sheet_name=sheet_name, index=False)
             
             # Format the worksheet

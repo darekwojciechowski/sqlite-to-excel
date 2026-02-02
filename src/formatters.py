@@ -9,12 +9,24 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.worksheet import Worksheet
 
+from .constants import (
+    ROW_NUMBER_COLUMN_NAME,
+    EXCEL_HEADER_BG_COLOR,
+    EXCEL_HEADER_FONT_COLOR,
+    EXCEL_BORDER_COLOR,
+    EXCEL_HEADER_FONT_SIZE,
+    EXCEL_MAX_COLUMN_WIDTH,
+    EXCEL_COLUMN_WIDTH_PADDING,
+    EXCEL_HEADER_ROW_HEIGHT,
+    EXCEL_DATETIME_FORMAT
+)
+
 
 def add_row_numbers(df: pd.DataFrame) -> pd.DataFrame:
     """
     Add sequential row numbers starting from 1 at the beginning of DataFrame.
     """
-    df.insert(0, 'Row', range(1, len(df) + 1))
+    df.insert(0, ROW_NUMBER_COLUMN_NAME, range(1, len(df) + 1))
     return df
 
 
@@ -27,17 +39,17 @@ def format_worksheet(worksheet: Worksheet, df: pd.DataFrame) -> None:
     - Freeze top row
     """
     # Define styles
-    header_font = Font(bold=True, color="FFFFFF", size=11)
-    header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+    header_font = Font(bold=True, color=EXCEL_HEADER_FONT_COLOR, size=EXCEL_HEADER_FONT_SIZE)
+    header_fill = PatternFill(start_color=EXCEL_HEADER_BG_COLOR, end_color=EXCEL_HEADER_BG_COLOR, fill_type="solid")
     header_alignment = Alignment(horizontal="center", vertical="center")
     
     cell_alignment = Alignment(horizontal="left", vertical="center")
     
     thin_border = Border(
-        left=Side(style='thin', color='D3D3D3'),
-        right=Side(style='thin', color='D3D3D3'),
-        top=Side(style='thin', color='D3D3D3'),
-        bottom=Side(style='thin', color='D3D3D3')
+        left=Side(style='thin', color=EXCEL_BORDER_COLOR),
+        right=Side(style='thin', color=EXCEL_BORDER_COLOR),
+        top=Side(style='thin', color=EXCEL_BORDER_COLOR),
+        bottom=Side(style='thin', color=EXCEL_BORDER_COLOR)
     )
     
     # Format header row
@@ -65,7 +77,7 @@ def format_worksheet(worksheet: Worksheet, df: pd.DataFrame) -> None:
             
             # Format datetime cells
             if is_datetime_col and pd.notna(value):
-                cell.number_format = 'YYYY-MM-DD HH:MM:SS'
+                cell.number_format = EXCEL_DATETIME_FORMAT
             
             # Update max length
             if value is not None:
@@ -73,11 +85,11 @@ def format_worksheet(worksheet: Worksheet, df: pd.DataFrame) -> None:
                 max_length = max(max_length, cell_length)
         
         # Set column width (add some padding)
-        adjusted_width = min(max_length + 2, 50)  # Cap at 50 characters
+        adjusted_width = min(max_length + EXCEL_COLUMN_WIDTH_PADDING, EXCEL_MAX_COLUMN_WIDTH)
         worksheet.column_dimensions[column_letter].width = adjusted_width
     
     # Freeze top row (header)
     worksheet.freeze_panes = worksheet['A2']
     
     # Set row height for header
-    worksheet.row_dimensions[1].height = 20
+    worksheet.row_dimensions[1].height = EXCEL_HEADER_ROW_HEIGHT
