@@ -1,33 +1,27 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Excel file writer for SQLite database tables.
 """
 
-import logging
 from pathlib import Path
 import pandas as pd
 
-from .constants import DB_FILE_EXTENSION, EXCEL_FILE_EXTENSION, EXCEL_MAX_SHEET_NAME_LENGTH
+from .protocols import LoggerProtocol
+from .constants import DB_FILE_EXTENSION, EXCEL_FILE_EXTENSION
 from .database import get_all_tables, rename_data_format_columns, read_table
 from .timestamp_converter import convert_timestamps_to_readable
 from .formatters import add_row_numbers, format_worksheet
+from .utils import validate_non_empty_string, sanitize_excel_sheet_name
 
 
 def convert_db_to_excel(
     db_path: str,
     output_path: str,
-    logger: logging.Logger | None = None
+    logger: LoggerProtocol
 ) -> None:
     """Convert all tables from SQLite database to Excel file"""
-    if logger is None:
-        logger = logging.getLogger(__name__)
-    
-    # Validate db_path
-    if not db_path or not db_path.strip():
-        raise ValueError("Database path cannot be empty")
-    
-    db_path = db_path.strip()
+    # Validate and sanitize inputs
+    db_path = validate_non_empty_string(db_path, "Database path")
+    output_path = validate_non_empty_string(output_path, "Output path")
     db_file = Path(db_path)
     
     if not db_file.exists():
@@ -40,19 +34,10 @@ def convert_db_to_excel(
     if db_file.suffix.lower() != DB_FILE_EXTENSION:
         logger.warning(f"File does not have {DB_FILE_EXTENSION} extension: {db_path}")
     
-    # Validate output_path
-    if not output_path or not output_path.strip():
-        raise ValueError("Output path cannot be empty")
-    
-    output_path = output_path.strip()
-    
+    # Validate output file extension
     output_file = Path(output_path)
-    
     if output_file.suffix.lower() != EXCEL_FILE_EXTENSION:
         raise ValueError(f"Output file must have {EXCEL_FILE_EXTENSION} extension: {output_path}")
-    
-    if output_file.suffix.lower() != '.xlsx':
-        raise ValueError(f"Output file must have .xlsx extension: {output_path}")
     
     # Create output directory if it doesn't exist
     output_dir = output_file.parent
@@ -90,8 +75,7 @@ def convert_db_to_excel(
             df = add_row_numbers(df)
             
             # Save to sheet (sheet name is table name)
-            # Excel has a maximum sheet name length
-            sheet_name = table[:EXCEL_MAX_SHEET_NAME_LENGTH] if len(table) > EXCEL_MAX_SHEET_NAME_LENGTH else table
+            sheet_name = sanitize_excel_sheet_name(table)
             df.to_excel(writer, sheet_name=sheet_name, index=False)
             
             # Format the worksheet

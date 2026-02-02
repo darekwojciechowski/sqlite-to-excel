@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Utility functions for SQLite to Excel converter.
 """
@@ -15,9 +13,22 @@ from .constants import (
     DEFAULT_LOGS_DIR,
     DB_FILE_EXTENSION,
     EXCEL_FILE_EXTENSION,
+    EXCEL_MAX_SHEET_NAME_LENGTH,
     INVALID_FILENAME_CHARS,
     LOGGING_CONFIG_FILE
 )
+
+
+def validate_non_empty_string(value: str, name: str) -> str:
+    """Validate that string is not empty or whitespace only."""
+    if not value or not value.strip():
+        raise ValueError(f"{name} cannot be empty")
+    return value.strip()
+
+
+def sanitize_excel_sheet_name(name: str) -> str:
+    """Sanitize and truncate name for Excel sheet (max 31 chars)."""
+    return name[:EXCEL_MAX_SHEET_NAME_LENGTH] if len(name) > EXCEL_MAX_SHEET_NAME_LENGTH else name
 
 
 def setup_logging() -> logging.Logger:
@@ -39,10 +50,7 @@ def setup_logging() -> logging.Logger:
 
 def find_all_db_files(input_dir: str = DEFAULT_INPUT_DIR) -> list[str]:
     """Find all .db files in the input/ folder"""
-    if not input_dir or not input_dir.strip():
-        raise ValueError("Input directory cannot be empty")
-    
-    input_dir = input_dir.strip()
+    input_dir = validate_non_empty_string(input_dir, "Input directory")
     input_path = Path(input_dir)
     
     if not input_path.exists():
@@ -61,14 +69,8 @@ def find_all_db_files(input_dir: str = DEFAULT_INPUT_DIR) -> list[str]:
 
 def get_output_path(db_path: str, output_dir: str = DEFAULT_OUTPUT_DIR) -> str:
     """Generate output Excel file path based on input database filename"""
-    if not db_path or not db_path.strip():
-        raise ValueError("Database path cannot be empty")
-    
-    if not output_dir or not output_dir.strip():
-        raise ValueError("Output directory cannot be empty")
-    
-    db_path = db_path.strip()
-    output_dir = output_dir.strip()
+    db_path = validate_non_empty_string(db_path, "Database path")
+    output_dir = validate_non_empty_string(output_dir, "Output directory")
     
     # Get the base filename without extension
     db_file = Path(db_path)
