@@ -4,8 +4,7 @@
 Main entry point for SQLite to Excel converter.
 """
 
-import sqlite3
-from convert_db_to_excel import setup_logging, find_all_db_files, get_output_path, convert_db_to_excel
+from src import setup_logging, find_all_db_files, get_output_path, convert_db_to_excel
 
 
 def main() -> int:
