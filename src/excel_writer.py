@@ -16,21 +16,47 @@ from .formatters import add_row_numbers, format_worksheet
 
 def convert_db_to_excel(
     db_path: str,
-    output_path: str = 'output/database.xlsx',
+    output_path: str,
     logger: logging.Logger | None = None
 ) -> None:
     """Convert all tables from SQLite database to Excel file"""
     if logger is None:
         logger = logging.getLogger(__name__)
     
-    # Validate database file exists
+    # Validate db_path
+    if not db_path or not db_path.strip():
+        raise ValueError("Database path cannot be empty")
+    
+    db_path = db_path.strip()
+    
     if not os.path.exists(db_path):
         raise FileNotFoundError(f"Database file not found: {db_path}")
     
-    # Create output/ folder if it doesn't exist
+    if not os.path.isfile(db_path):
+        raise ValueError(f"Path is not a file: {db_path}")
+    
+    # Validate it's a SQLite database
+    if not db_path.lower().endswith('.db'):
+        logger.warning(f"File does not have .db extension: {db_path}")
+    
+    # Validate output_path
+    if not output_path or not output_path.strip():
+        raise ValueError("Output path cannot be empty")
+    
+    output_path = output_path.strip()
+    
+    if not output_path.lower().endswith('.xlsx'):
+        raise ValueError(f"Output file must have .xlsx extension: {output_path}")
+    
+    # Create output directory if it doesn't exist
     output_dir = os.path.dirname(output_path)
     if output_dir:
-        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        try:
+            Path(output_dir).mkdir(parents=True, exist_ok=True)
+        except PermissionError:
+            raise PermissionError(f"No permission to create output directory: {output_dir}")
+        except OSError as e:
+            raise OSError(f"Failed to create output directory {output_dir}: {e}")
     
     # Get list of tables
     tables = get_all_tables(db_path)
