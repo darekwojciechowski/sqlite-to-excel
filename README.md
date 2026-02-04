@@ -1,2 +1,40 @@
-# sqlite-to-excel
- SQLite to Excel converter with automatic formatting and Unix timestamp conversion.
+# SQLite to Excel Converter
+
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![openpyxl](https://img.shields.io/badge/openpyxl-3.1+-green.svg)](https://openpyxl.readthedocs.io/)
+[![pandas](https://img.shields.io/badge/pandas-2.0+-150458.svg)](https://pandas.pydata.org/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+A modern Python tool for converting SQLite databases to formatted Excel files with automatic timestamp detection and conversion.
+
+## Features
+
+✨ **Automatic Discovery** - Processes all `.db` files in the input directory  
+📊 **Smart Formatting** - Professional Excel styling with headers, borders, and column width optimization  
+🕒 **Timestamp Detection** - Auto-detects and converts Unix timestamps to readable datetime format  
+🔢 **Row Numbering** - Adds sequential row numbers for easy reference  
+🎨 **Multi-Table Support** - Each database table becomes a separate Excel sheet  
+🛡️ **SQL Injection Protection** - Parameterized queries and input validation  
+📝 **Comprehensive Logging** - Detailed logs with file and console output
+
+## Usage
+
+1. Place your `.db` files in the `input/` folder
+2. Run: `python main.py`
+3. Find Excel files in the `output/` folder
+
+## Project Architecture
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://mermaid.ink/svg/JSV7aW5pdDogeyJ0aGVtZSI6ICJkYXJrIiwgInRoZW1lVmFyaWFibGVzIjogeyJwcmltYXJ5Q29sb3IiOiAiIzFmMjkzNyIsICJtYWluQmtnIjogIiMxZjI5MzciLCAiY2x1c3RlckJrZyI6ICIjMTExODI3IiwgImNsdXN0ZXJCb3JkZXIiOiAiIzM3NDE1MSIsICJsaW5lQ29sb3IiOiAiIzljYTNhZiIsICJmb250RmFtaWx5IjogIlNlZ29lIFVJLCBzYW5zLXNlcmlmIiwgImVkZ2VMYWJlbEJhY2tncm91bmQiOiAiIzExMTgyNyJ9LCAibWF4VGV4dFNpemUiOiAxMDAwMDB9fSUlCmZsb3djaGFydCBUQgogICAgc3ViZ3JhcGggSW5wdXQgWyJEYXRhIFNvdXJjZXMiXQogICAgICAgIEFbU1FMaXRlIERhdGFiYXNlIElucHV0XTo6OmRhdGEKICAgIGVuZAoKICAgIHN1YmdyYXBoIFByb2Nlc3NpbmcgWyJQcm9jZXNzaW5nIFBpcGVsaW5lIl0KICAgICAgICBkaXJlY3Rpb24gVEIKICAgICAgICBCW1ZhbGlkYXRpb24gJiBTY2hlbWEgQW5hbHlzaXNdOjo6cHJvYwogICAgICAgIENbRGF0YSBQcm9jZXNzaW5nICYgVGltZXN0YW1wIENvbnZlcnNpb25dOjo6cHJvYwogICAgICAgIERbRXhjZWwgRm9ybWF0dGluZyAmIFN0eWxpbmddOjo6cHJvYwogICAgZW5kCgogICAgc3ViZ3JhcGggT3V0cHV0IFsiT3V0cHV0ICYgTG9nZ2luZyJdCiAgICAgICAgZGlyZWN0aW9uIFRCCiAgICAgICAgRVtFeGNlbCBXb3JrYm9vayBPdXRwdXRdOjo6dWkKICAgICAgICBGW0xvZ3MgJiBSZXBvcnRzXTo6OnVpCiAgICBlbmQKCiAgICBBIC0tPiBCCiAgICBCIC0tPiBDCiAgICBDIC0tPiBECiAgICBEIC0tPiBFCiAgICAKICAgIEIgLS4tPnxFcnJvcnMgJiBXYXJuaW5nc3wgRgogICAgQyAtLi0-fFByb2dyZXNzIEluZm98IEYKICAgIEQgLS4tPnxTdWNjZXNzIFN0YXR1c3wgRgoKICAgIGNsYXNzRGVmIGRhdGEgZmlsbDojMTcyNTU0LHN0cm9rZTojNjBhNWZhLHN0cm9rZS13aWR0aDozcHgsY29sb3I6I2RiZWFmZTsKICAgIGNsYXNzRGVmIHByb2MgZmlsbDojMmUxMDY1LHN0cm9rZTojYTc4YmZhLHN0cm9rZS13aWR0aDozcHgsY29sb3I6I2YzZThmZjsKICAgIGNsYXNzRGVmIHVpIGZpbGw6IzA2NGUzYixzdHJva2U6IzM0ZDM5OSxzdHJva2Utd2lkdGg6M3B4LGNvbG9yOiNkMWZhZTU7CiAgICAKICAgIHN0eWxlIElucHV0IGZpbGw6IzExMTgyNyxzdHJva2U6IzM3NDE1MSxzdHJva2Utd2lkdGg6MnB4LHJ4OjEwLHJ5OjEwCiAgICBzdHlsZSBQcm9jZXNzaW5nIGZpbGw6IzExMTgyNyxzdHJva2U6IzM3NDE1MSxzdHJva2Utd2lkdGg6MnB4LHJ4OjEwLHJ5OjEwCiAgICBzdHlsZSBPdXRwdXQgZmlsbDojMTExODI3LHN0cm9rZTojMzc0MTUxLHN0cm9rZS13aWR0aDoycHgscng6MTAscnk6MTAK" width="460">
+  <img alt="Diagram" width="460" style="max-width: 100%;" src="https://mermaid.ink/svg/JSV7aW5pdDogeyJ0aGVtZSI6ICJiYXNlIiwgInRoZW1lVmFyaWFibGVzIjogeyJwcmltYXJ5Q29sb3IiOiAiI2ZmZiIsICJtYWluQmtnIjogIiNmZmYiLCAiY2x1c3RlckJrZyI6ICIjZjlmYWZiIiwgImNsdXN0ZXJCb3JkZXIiOiAiI2U1ZTdlYiIsICJsaW5lQ29sb3IiOiAiIzZiNzI4MCIsICJmb250RmFtaWx5IjogIlNlZ29lIFVJLCBzYW5zLXNlcmlmIiwgImVkZ2VMYWJlbEJhY2tncm91bmQiOiAiI2Y5ZmFmYiJ9LCAibWF4VGV4dFNpemUiOiAxMDAwMDB9fSUlCmZsb3djaGFydCBUQgogICAgc3ViZ3JhcGggSW5wdXQgWyJEYXRhIFNvdXJjZXMiXQogICAgICAgIEFbU1FMaXRlIERhdGFiYXNlIElucHV0XTo6OmRhdGEKICAgIGVuZAoKICAgIHN1YmdyYXBoIFByb2Nlc3NpbmcgWyJQcm9jZXNzaW5nIFBpcGVsaW5lIl0KICAgICAgICBkaXJlY3Rpb24gVEIKICAgICAgICBCW1ZhbGlkYXRpb24gJiBTY2hlbWEgQW5hbHlzaXNdOjo6cHJvYwogICAgICAgIENbRGF0YSBQcm9jZXNzaW5nICYgVGltZXN0YW1wIENvbnZlcnNpb25dOjo6cHJvYwogICAgICAgIERbRXhjZWwgRm9ybWF0dGluZyAmIFN0eWxpbmddOjo6cHJvYwogICAgZW5kCgogICAgc3ViZ3JhcGggT3V0cHV0IFsiT3V0cHV0ICYgTG9nZ2luZyJdCiAgICAgICAgZGlyZWN0aW9uIFRCCiAgICAgICAgRVtFeGNlbCBXb3JrYm9vayBPdXRwdXRdOjo6dWkKICAgICAgICBGW0xvZ3MgJiBSZXBvcnRzXTo6OnVpCiAgICBlbmQKCiAgICBBIC0tPiBCCiAgICBCIC0tPiBDCiAgICBDIC0tPiBECiAgICBEIC0tPiBFCiAgICAKICAgIEIgLS4tPnxFcnJvcnMgJiBXYXJuaW5nc3wgRgogICAgQyAtLi0-fFByb2dyZXNzIEluZm98IEYKICAgIEQgLS4tPnxTdWNjZXNzIFN0YXR1c3wgRgoKICAgIGNsYXNzRGVmIGRhdGEgZmlsbDojZWZmNmZmLHN0cm9rZTojM2I4MmY2LHN0cm9rZS13aWR0aDozcHgsY29sb3I6IzFlM2E4YTsKICAgIGNsYXNzRGVmIHByb2MgZmlsbDojZjVmM2ZmLHN0cm9rZTojOGI1Y2Y2LHN0cm9rZS13aWR0aDozcHgsY29sb3I6IzRjMWQ5NTsKICAgIGNsYXNzRGVmIHVpIGZpbGw6I2VjZmRmNSxzdHJva2U6IzEwYjk4MSxzdHJva2Utd2lkdGg6M3B4LGNvbG9yOiMwNjRlM2I7CiAgICAKICAgIHN0eWxlIElucHV0IGZpbGw6I2Y5ZmFmYixzdHJva2U6I2U1ZTdlYixzdHJva2Utd2lkdGg6MnB4LHJ4OjEwLHJ5OjEwCiAgICBzdHlsZSBQcm9jZXNzaW5nIGZpbGw6I2Y5ZmFmYixzdHJva2U6I2U1ZTdlYixzdHJva2Utd2lkdGg6MnB4LHJ4OjEwLHJ5OjEwCiAgICBzdHlsZSBPdHRwdXQgZmlsbDojZjlmYWZiLHN0cm9rZTojZTVlN2ViLHN0cm9rZS13aWR0aDoycHgscng6MTAscnk6MTAK">
+</picture>
+
+## Development
+
+Built with modern Python best practices:
+- **Modular architecture** - Clear separation of concerns
+- **Type hints** - Full type annotations with Protocol support
+- **Dependency injection** - Testable and maintainable code
+- **Pathlib** - Modern path handling
+- **SQL safety** - Parameterized queries and identifier validation
